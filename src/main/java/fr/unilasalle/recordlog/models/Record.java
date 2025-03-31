@@ -1,9 +1,6 @@
 package fr.unilasalle.recordlog.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,13 +16,17 @@ public class Record {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String titre;
-    private long auteurID;
+    @ManyToOne
+    @JoinColumn(name = "artist_id")
+    private Artist artist;
+
+    private String title;
+    private long artistID;
     private String format;
-    private String sortie;
+    private String date;
     private String genre;
     private String label;
-    private String listeTitres;
-    private String pochette;
-    private String lienSpotify;
+    private String songsList;
+    private String coverLink;
+    private String spotifyLink;
 }

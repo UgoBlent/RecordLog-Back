@@ -1,5 +1,6 @@
 package fr.unilasalle.recordlog.services;
 
+import fr.unilasalle.recordlog.exceptions.NotFoundException;
 import fr.unilasalle.recordlog.models.Record;
 import fr.unilasalle.recordlog.repositories.RecordRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,25 +23,40 @@ public class RecordService {
     public Record addRecord(Record record) {
         return recordRepository.save(record);
     }
-    /*public Record updateRecord(Record record) throws NotFoundException {
-        if (record.getId() == null) {
-            record = this.recordRepository.save(record);
-            return record;
-        } else {
-            Record finalRecord = record;
-            Optional<Record> found = this.getRecords()
-                    .stream()
-                    .filter(lightKnown -> lightKnown.getId().compareTo(finalRecord.getId()) == 0)
-                    .findFirst();
-            if (found.isEmpty()) {
-                log.error("Light with id {} not found", record.getId());
-                throw new NotFoundException("Can't update light", "Can't find Light with id : " + record.getId());
-            }
 
-            this.recordRepository.save(found.get());
-            return found.get();
+    public Record updateRecordById(Long id, Record updatedRecord) throws NotFoundException {
+        return recordRepository.findById(id).map(existing -> {
+            existing.setTitle(updatedRecord.getTitle());
+            existing.setArtistID(updatedRecord.getArtistID());
+            existing.setFormat(updatedRecord.getFormat());
+            existing.setDate(updatedRecord.getDate());
+            existing.setGenre(updatedRecord.getGenre());
+            existing.setLabel(updatedRecord.getLabel());
+            existing.setSongsList(updatedRecord.getSongsList());
+            existing.setCoverLink(updatedRecord.getCoverLink());
+            existing.setSpotifyLink(updatedRecord.getSpotifyLink());
+            return recordRepository.save(existing);
+        }).orElseThrow(() -> new NotFoundException("Record not found", "No record with id: " + id));
+    }
+
+    public void deleteRecordById(Long id) throws NotFoundException {
+        if (!recordRepository.existsById(id)) {
+            throw new NotFoundException("Delete failed", "No record with id: " + id);
         }
-    }*/
+        recordRepository.deleteById(id);
+    }
 
+    public List<Record> searchByTitle(String keyword) {
+        System.out.println("🔍 Recherche dans la BDD avec : " + keyword);
+        return recordRepository.findByTitleContainingIgnoreCase(keyword);
+    }
+
+    public List<Record> findByArtistID(long artistId) {
+        return recordRepository.findByArtistID(artistId);
+    }
+
+    public List<Record> getRecordsByArtistId(Long artistId) {
+        return recordRepository.findByArtistId(artistId);
+    }
 
 }

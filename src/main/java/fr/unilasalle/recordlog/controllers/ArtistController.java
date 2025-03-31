@@ -1,12 +1,31 @@
 package fr.unilasalle.recordlog.controllers;
 
-
+import fr.unilasalle.recordlog.models.Artist;
+import fr.unilasalle.recordlog.services.ArtistService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/artist")
+@RequestMapping("/artists")
 @RequiredArgsConstructor
 public class ArtistController {
+    private final ArtistService artistService;
+
+    @GetMapping
+    public List<Artist> getAll() {
+        return artistService.getAllArtists();
+    }
+
+    @PostMapping
+    public ResponseEntity<Artist> add(@RequestBody Artist artist) {
+        return ResponseEntity.ok(artistService.addArtist(artist));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Artist>> search(@RequestParam String name) {
+        return ResponseEntity.ok(artistService.searchByName(name));
+    }
 }

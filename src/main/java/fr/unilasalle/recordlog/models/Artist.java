@@ -19,6 +19,7 @@ public class Artist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String nom;
-    private String vraiNoms;
+    private String name;
+    private String realNames;
+    private String pictureLink;
 }
