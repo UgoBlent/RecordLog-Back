@@ -21,7 +21,6 @@ public class Record {
     private Artist artist;
 
     private String title;
-    private long artistID;
     private String format;
     private String date;
     private String genre;

@@ -42,11 +42,6 @@ public class RecordController {
         return ResponseEntity.ok(recordService.searchByTitle(q));
     }
 
-    @GetMapping("/artist/{artistId}")
-    public ResponseEntity<List<Record>> searchByArtist(@PathVariable long artistId) {
-        return ResponseEntity.ok(recordService.findByArtistID(artistId));
-    }
-
     @GetMapping("/by-artist/{artistId}")
     public ResponseEntity<List<Record>> getByArtistId(@PathVariable Long artistId) {
         return ResponseEntity.ok(recordService.getRecordsByArtistId(artistId));

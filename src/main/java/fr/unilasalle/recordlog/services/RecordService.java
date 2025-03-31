@@ -27,7 +27,7 @@ public class RecordService {
     public Record updateRecordById(Long id, Record updatedRecord) throws NotFoundException {
         return recordRepository.findById(id).map(existing -> {
             existing.setTitle(updatedRecord.getTitle());
-            existing.setArtistID(updatedRecord.getArtistID());
+            existing.setArtist(updatedRecord.getArtist());
             existing.setFormat(updatedRecord.getFormat());
             existing.setDate(updatedRecord.getDate());
             existing.setGenre(updatedRecord.getGenre());
@@ -47,12 +47,7 @@ public class RecordService {
     }
 
     public List<Record> searchByTitle(String keyword) {
-        System.out.println("🔍 Recherche dans la BDD avec : " + keyword);
         return recordRepository.findByTitleContainingIgnoreCase(keyword);
-    }
-
-    public List<Record> findByArtistID(long artistId) {
-        return recordRepository.findByArtistID(artistId);
     }
 
     public List<Record> getRecordsByArtistId(Long artistId) {
