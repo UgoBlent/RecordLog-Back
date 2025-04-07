@@ -1,36 +1,73 @@
-version: '3.8'
+  version: '3.8'
 
-services:
-  postgres-keycloak:
-    image: postgres:16
-    container_name: postgres-keycloak
-    environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: keycloak
-    ports:
-      - "5433:5432"
-    volumes:
-      - keycloak-db:/var/lib/postgresql/data
+  services:
+    postgres-keycloak:
+      image: postgres:16
+      container_name: postgres-keycloak
+      environment:
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: keycloak
+        POSTGRES_PASSWORD: keycloak
+      ports:
+        - "5433:5432"
+      volumes:
+        - keycloak-db:/var/lib/postgresql/data
 
-  keycloak:
-    image: quay.io/keycloak/keycloak:24.0.3
-    container_name: keycloak
-    command: start-dev
-    environment:
-      KC_DB: postgres
-      KC_DB_URL_HOST: postgres-keycloak
-      KC_DB_URL_PORT: 5432
-      KC_DB_USERNAME: keycloak
-      KC_DB_PASSWORD: keycloak
-      KC_DB_SCHEMA: public
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-    ports:
-      - "8081:8080"
-    depends_on:
-      - postgres-keycloak
-    restart: unless-stopped
+    keycloak:
+      image: quay.io/keycloak/keycloak:24.0.3
+      container_name: keycloak
+      command: start-dev
+      environment:
+        KC_DB: postgres
+        KC_DB_URL_HOST: postgres-keycloak
+        KC_DB_URL_PORT: 5432
+        KC_DB_USERNAME: keycloak
+        KC_DB_PASSWORD: keycloak
+        KC_DB_SCHEMA: public
+        KEYCLOAK_ADMIN: admin
+        KEYCLOAK_ADMIN_PASSWORD: admin
+      ports:
+        - "8082:8080"
+      depends_on:
+        - postgres-keycloak
+      restart: unless-stopped
 
-volumes:
-  keycloak-db:
+    # 📦 Elasticsearch
+    elasticsearch:
+      image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+      container_name: elasticsearch
+      environment:
+        - discovery.type=single-node
+        - xpack.security.enabled=false
+        - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      ports:
+        - "9200:9200"
+      volumes:
+        - esdata:/usr/share/elasticsearch/data
+
+    # 📦 Logstash
+    logstash:
+      image: docker.elastic.co/logstash/logstash:8.11.1
+      container_name: logstash
+      ports:
+        - "5000:5000"
+      volumes:
+        - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      depends_on:
+        - elasticsearch
+
+    # 📊 Kibana
+    kibana:
+      image: docker.elastic.co/kibana/kibana:8.11.1
+      container_name: kibana
+      environment:
+        - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      ports:
+        - "8081:5601"
+      depends_on:
+        - elasticsearch
+
+  volumes:
+    postgres-data:
+    keycloak-db:
+    esdata:
