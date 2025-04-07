@@ -1,5 +1,6 @@
 package fr.unilasalle.recordlog.controllers;
 
+import fr.unilasalle.recordlog.exceptions.NotFoundException;
 import fr.unilasalle.recordlog.models.Artist;
 import fr.unilasalle.recordlog.services.ArtistService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,12 @@ public class ArtistController {
     public List<Artist> getAll() {
         return artistService.getAllArtists();
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Artist> getArtistById(@PathVariable Long id) throws NotFoundException {
+        return ResponseEntity.ok(artistService.getArtistById(id));
+    }
+
 
     @PostMapping
     public ResponseEntity<Artist> add(@RequestBody Artist artist) {

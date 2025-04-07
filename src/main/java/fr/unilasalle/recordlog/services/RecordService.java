@@ -24,6 +24,12 @@ public class RecordService {
         return recordRepository.save(record);
     }
 
+    public Record getRecordById(Long id) throws NotFoundException {
+        return recordRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Record not found", "No record with id: " + id));
+    }
+
+
     public Record updateRecordById(Long id, Record updatedRecord) throws NotFoundException {
         return recordRepository.findById(id).map(existing -> {
             existing.setTitle(updatedRecord.getTitle());

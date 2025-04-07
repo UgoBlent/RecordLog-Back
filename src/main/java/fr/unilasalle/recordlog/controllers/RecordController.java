@@ -25,6 +25,13 @@ public class RecordController {
     public ResponseEntity<Record> addRecord(@RequestBody Record record) {
         return new ResponseEntity<>(this.recordService.addRecord(record), HttpStatus.OK);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Record> getRecordById(@PathVariable Long id) throws NotFoundException {
+        return ResponseEntity.ok(recordService.getRecordById(id));
+    }
+
+
     @PutMapping("/{id}")
     public ResponseEntity<Record> updateRecord(@PathVariable Long id, @RequestBody Record record) throws NotFoundException {
         Record updated = recordService.updateRecordById(id, record);
